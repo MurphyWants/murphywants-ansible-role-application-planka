@@ -1,0 +1,35 @@
+---
+  - name: Create folders
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+    loop:
+      - "{{ PLANKA_PATH }}"
+      - "{{ PLANKA_PATH }}/volumes"
+      - "{{ PLANKA_PATH }}/volumes/postgresql-data"
+      - "{{ PLANKA_PATH }}/volumes/postgresql-docker-entrypoint-initdb.d"
+      - "{{ PLANKA_PATH }}/volumes/planka-app-public-project-background-images"
+      - "{{ PLANKA_PATH }}/volumes/planka-app-public-user-avatars"
+      - "{{ PLANKA_PATH }}/volumes/planka-app-public-attachments"
+      - "{{ PLANKA_PATH }}/backups"
+      - "{{ PLANKA_PATH }}/backups/database"
+      - "{{ PLANKA_PATH }}/backups/tarballs"
+      - "{{ PLANKA_PATH }}/backups/logs"
+      - "{{ PLANKA_PATH }}/scripts"
+      - "{{ PLANKA_PATH }}/docs"
+
+
+  - name: Copy docker compose file
+    ansible.builtin.template:
+      src: "{{ role_path }}/templates/PLANKA_docker-compose.yml.j2"
+      dest: "{{ PLANKA_PATH }}/docs/docker-compose.yml"
+
+  - name: Install nginx
+    ansible.builtin.package:
+      name: nginx
+      state: 'latest'
+
+  - name: Install sqlite3
+    ansible.builtin.package:
+      name: sqlite3
+

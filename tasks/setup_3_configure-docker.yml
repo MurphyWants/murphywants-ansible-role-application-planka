@@ -1,0 +1,7 @@
+---
+  - name: Start planka
+    community.docker.docker_compose:
+      project_src: "{{ PLANKA_PATH }}/docs"
+      files: "docker-compose.yml"
+      pull: true
+

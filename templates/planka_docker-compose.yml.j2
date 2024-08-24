@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  planka:
+    image: ghcr.io/plankanban/planka:latest
+    restart: on-failure
+    container_name: planka
+    volumes:
+      - {{ PLANKA_PATH }}/volumes/planka-app-public-user-avatars:/app/public/user-avatars
+      - {{ PLANKA_PATH }}/volumes/planka-app-public-project-background-images:/app/public/project-background-images
+      - {{ PLANKA_PATH }}/volumes/planka-app-public-attachments:/app/private/attachments
+    ports:
+      - "127.0.0.1:{{ PLANKA_HTTP_PORT }}:1337/tcp"
+    environment:
+      - BASE_URL=https://{{ PLANKA_FQDN }}
+      - DATABASE_URL=postgresql://{{ PLANKA_POSTGRES_ENV_POSTGRES_USER }}:{{ PLANKA_POSTGRES_ENV_POSTGRES_PASSWORD }}@planka_db/{{ PLANKA_POSTGRES_ENV_POSTGRES_DB }}
+      - SECRET_KEY={{ PLANKA_SECRET_KEY }}
+      - DEFAULT_ADMIN_EMAIL={{ PLANKA_ENV_DEFAULT_ADMIN_EMAIL }}
+      - DEFAULT_ADMIN_PASSWORD={{ PLANKA_ENV_DEFAULT_ADMIN_PASSWORD }}
+      - DEFAULT_ADMIN_NAME={{ PLANKA_ENV_DEFAULT_ADMIN_NAME }}
+      - DEFAULT_ADMIN_USERNAME={{ PLANKA_ENV_DEFAULT_ADMIN_USERNAME }}
+    depends_on:
+      - planka_db
+    networks:
+      - net_planka
+
+  planka_db:
+    image: postgres:16
+    restart: always
+    container_name: planka_postgres
+    environment:
+        - POSTGRES_PASSWORD={{ PLANKA_POSTGRES_ENV_POSTGRES_PASSWORD }}
+        - POSTGRES_USER={{ PLANKA_POSTGRES_ENV_POSTGRES_USER }}
+        - POSTGRES_DB={{ PLANKA_POSTGRES_ENV_POSTGRES_DB }}
+    volumes:
+        - {{ PLANKA_PATH }}/volumes/postgresql-data:/var/lib/postgresql/data
+        - {{ PLANKA_PATH }}/volumes/postgresql-docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+    healthcheck:
+            test: pg_isready -U postgres
+    networks:
+      - net_planka
+
+networks:
+  net_planka:
+    external: false
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.17.2.24/29
+    name: net_planka

@@ -1,0 +1,7 @@
+---
+  - name: Create planka ZFS volume
+    community.general.zfs:
+      name: "{{ PLANKA_STORAGE_ZFS_POOL }}/{{ PLANKA_STORAGE_ZFS_FS }}"
+      state: present
+      extra_zfs_properties:
+        mountpoint: "{{ PLANKA_PATH }}"
