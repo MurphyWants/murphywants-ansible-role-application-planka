@@ -21,7 +21,7 @@
 
   - name: Copy docker compose file
     ansible.builtin.template:
-      src: "{{ role_path }}/templates/PLANKA_docker-compose.yml.j2"
+      src: "{{ role_path }}/templates/planka_docker-compose.yml.j2"
       dest: "{{ PLANKA_PATH }}/docs/docker-compose.yml"
 
   - name: Install nginx
