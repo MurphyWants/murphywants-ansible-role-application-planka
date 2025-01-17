@@ -23,7 +23,7 @@
   
   - name: Copy nginx config
     ansible.builtin.template:
-      src: "{{ role_path }}/templates/PLANKA_nginx.conf.j2"
+      src: "{{ role_path }}/templates/planka_nginx.conf.j2"
       dest: /etc/nginx/conf.d/PLANKA_nginx.conf
 
   - name: Restart nginx
